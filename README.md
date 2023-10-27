@@ -1,5 +1,5 @@
 # Android Bank
-[WIP] A collection of android interview questions and answers with examples
+[WIP] A collection of android interview questions and answers
 
 ## Index
 * [Activity.md](https://github.com/mnaswinpro/android-bank/blob/main/android/Activity.md)
