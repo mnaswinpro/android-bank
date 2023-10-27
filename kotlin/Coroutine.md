@@ -191,7 +191,7 @@ acts accordingly.
 ## How to switch between dispatchers in a coroutine?
 * using withContext(Dispatcher.IO) { } - It does not create a new coroutine
 
-## What are the lifecycle of a coroutine.
+## What are the lifecycle of a coroutine?
 * New: A coroutine is created but not yet started.
 * Active: The coroutine is running.
 * Suspended: The coroutine has voluntarily suspended its execution, waiting for an event to occur.
