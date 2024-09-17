@@ -311,3 +311,42 @@ Created -> Started -> Running -> (Suspending <-> Resuming)* -> Completing/Cancel
 - Handling exceptions
 - Cancelling coroutines
 - Integrations with other libraries like Flow
+
+## What is Dispatcher.main.immediate? What are its advantages and disadvantages?
+It is a special dispatcher that offers a way to execute a coroutine on the main thread immediately bypassing the 
+regular dispatch mechanism (queue of tasks to execute).
+
+### Use cases
+- Initial UI setup: If you need to perform crucial UI initialization before the first frame is drawn, you might 
+use Dispatchers.Main.immediate.
+- Responding to critical user interactions: In cases where immediate feedback is essential (e.g., handling a 
+touch event), this dispatcher can ensure responsiveness.
+
+### Cautions
+- Race Conditions: If your immediate coroutine depends on something that another coroutine in the queue was 
+supposed to do first, you might get unexpected results or crashes.
+- Visual Glitches: Imagine a coroutine in the queue was about to update the UI. If your immediate coroutine modifies 
+the same UI elements before that, the user might see a flicker or an inconsistent state.
+
+## How to check if a coroutine is active or not? How to cancel it?
+```
+val scope = CoroutineScope(Job() + Dispatchers.Main)
+val job = scope.launch {
+    // Your coroutine code here
+}
+
+if (job.isActive) {
+    // Coroutine is still active
+    job.cancel()
+} else {
+    // Coroutine has completed or been canceled
+}
+```
+
+## What is thread confinement?
+Thread confinement is a concurrency concept that operations on an object or a piece of code is only accessed from a single 
+thread at a time. This helps prevent data races and other concurrency issues that can arise when multiple threads 
+try to modify shared data simultaneously.
+
+
+

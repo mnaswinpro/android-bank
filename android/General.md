@@ -2,6 +2,7 @@
 
 ## What are the main components of Android?
 
+### Activity
 Activities are the presentation layer of an Android app. 
 Each screen in an app is an Activity. 
 They handle user interaction and display the UI.
@@ -10,6 +11,7 @@ Purpose: The primary way users interact with your app. They represent a single s
 Example: A login screen, a settings page, a screen for displaying a list of items.
 Lifecycle: Managed by the system. Activities transition through various states (created, started, resumed, paused, stopped, destroyed) based on user interaction and the overall state of the device.
 
+### Service
 Services handle long-running operations in the background, such as playing music or fetching data over the network. 
 They have no UI.
 
@@ -19,6 +21,7 @@ Types:
 Foreground Services: Perform operations that are noticeable to the user (e.g., music playback) and require ongoing notification.
 Background Services: Perform operations that are not directly visible to the user. (Note: Restrictions on background execution have become stricter in recent Android versions.)
 
+### Broadcast Receivers
 Broadcast Receivers respond to system-wide broadcast announcements. 
 For example, an app can register a receiver to listen for incoming SMS messages.
 
@@ -47,6 +50,7 @@ registerReceiver(myReceiver, filter)
 unregisterReceiver(myReceiver)
 ```
 
+### Content Providers
 Content Providers manage access to a structured set of data, such as contacts or media files. 
 They can be used to share data between apps.
 Purpose: Manage and share app data with other apps. They provide a structured mechanism for accessing and modifying data.

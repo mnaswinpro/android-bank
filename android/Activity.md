@@ -1,7 +1,5 @@
 # Activity
 
-## What is an Activity?
-
 ## What are the lifecycles of an activity?
 
 1. onCreate()
@@ -31,13 +29,18 @@
    Use this to release any remaining resources.
 8. onSaveInstanceState()
    Called before the activity is stopped, but only if the system is potentially going to destroy the activity.
-   Allows you to save the activity's state in a Bundle so it can be restored later if the activity is recreated.
+   Allows you to save the activity's state in a Bundle, so it can be restored later if the activity is recreated.
 
 ## When to save activity data?
 The system can destroy an activity at any time if it needs to free up resources. 
 You should always save important data in onPause() or onSaveInstanceState() to prevent data loss.
 
+## How to save the UI state of an activity?
+Use a combination of onSaveInstanceState(), to handle system initiated process kill and a viewmodel for UI related data
+that survives configuration changes.
+
 ## When is onRestart called?
+In situations where an activity was stopped but not finished and is now being brought back to the foreground.
 
 ## When is onSaveInstance called?
 onSaveInstanceState() is called in situations where the system might destroy the activity, but it's not a guarantee 
@@ -82,7 +85,7 @@ the saved state as onCreate().
 To separate the state restoration logic from the initial creation logic in onCreate()
 onRestoreInstanceState() is only called when there is a saved state to restore, making the code more efficient.
 
-## Write the order of lifecycles called when activity moves from A to B on a button click and back to A?
+## Write the order of lifecycles called when activity moves from A to B on a button click and back to A on back press?
 
 1. From Activity A to Activity B
    onPause() (Activity A): Activity A is partially visible as Activity B starts to take over.
@@ -101,10 +104,30 @@ onRestoreInstanceState() is only called when there is a saved state to restore, 
 
 
 ## Why are activity not initialized using constructors?
+Activities, unlike regular classes, are not initialized using constructors because they are system components managed by the Android framework.
+
+### System Control
+The Android system needs to control the lifecycle of activities. It handles the creation, destruction, and various state transitions (e.g., starting, stopping, resuming). Using constructors would take away this control from the system.
+
+###
+Complex Initialization
+Activities require more than just simple object creation. They need to be associated with a context, have their layout inflated, and be connected to the system's activity stack. Constructors are not designed for such complex initialization processes.
+
+### Lifecycle Callbacks
+Activities have a well-defined lifecycle with specific callback methods (like onCreate(), onStart(), onResume(), etc.). These callbacks provide entry points for developers to perform initialization, handle state changes, and manage resources. Constructors wouldn't fit into this lifecycle model.
+
+### Intent Handling
+Activities are often started with intents, which may contain data or instructions. The system needs to handle these intents and pass them to the activity. Constructors wouldn't allow for this kind of external input during initialization.
 
 ## When do we need to open an Activity in a new task?
 
 Creating a new task for certain activities in your e-commerce app can enhance the user experience and handle specific scenarios more effectively.
+
+Improved security: 
+When an activity is launched in a new task, it's isolated from the previous task in terms of the back stack. This can prevent sensitive data from being accidentally exposed if the user navigates back through the app.
+
+Fresh start: 
+Launching in a new task ensures that the activity starts with a clean state, without any potential interference from the previous task. This can be useful for security-sensitive operations like login or payment processing.
 
 Notifications and Deep Links:
 When a user clicks on a notification or a deep link that should open a specific part of your app (e.g., a product page, order details), you might want to launch that activity in a new task. This ensures that the user has a clear entry point into that specific flow and can easily navigate back to their previous context.
@@ -117,18 +140,32 @@ Certain activities, like a login screen or a settings screen, might be better su
 Sharing Content:
 When your app allows users to share content (e.g., product links, promotions) with other apps, the sharing activity might be launched in a separate task to provide a clean separation between your app and the external app.
 
+```
+val intent = Intent(this, TransferActivity::class. java)  
+intent.flags = Intent.FLAG_ACTIVITY_ NEW_ TASK startActivity(intent) 
+```
+
 ## What is taskAffinity?
+The taskAffinity attribute can be used to group related activities together in the same task.
+It is same as starting activity in a new task but with better control for grouping activities together.
+Normally we would not want any back navigation in the new task, so usually activities don't need grouping when launched in new task.
+
+
+```
+<activity
+    android:name=".TransferActivity"
+    android:taskAffinity=".paymentTasks" />
+```
 
 ## Why do launcher activity have exported flag set as true by default? 
-
-## How to save the UI state of an activity?
+Specifies whether an activity can be launched by other apps. By default true for launcher activity.
 
 ## What are the different launch modes to launch an activity?
 
 1. standard (default)
    Each time you start the activity, a new instance is created and added to the task's back stack.
    If you start the same activity multiple times, you'll have multiple instances of it in the back stack.
-   Example: If Activity A starts Activity B (which has standard launch mode), a new instance of B is created and added to the stack above A. Pressing back goes back to A, then another press destroys A.
+   Example: If Activity A starts Activity B (which has standard launch mode), a new instance of B is created and added to the stack above A. Pressing back goes to A, then another press destroys A.
 2. singleTop
    If an instance of the activity already exists at the top of the current task, the system routes the intent to that instance through onNewIntent() instead of creating a new one.
    If an instance doesn't exist at the top, a new instance is created.
@@ -142,3 +179,21 @@ When your app allows users to share content (e.g., product links, promotions) wi
 4. singleInstance
    Similar to singleTask, but the system doesn't launch any other activities into the task holding the instance. The activity is always the single and only member of its task.
    Example: If Activity A starts Activity B (with singleInstance), B is launched in its own separate task, and no other activity can be added to that task.
+   A -> B -> C -> D
+   B with singleInstance
+   Task 1: A -> C -> D
+   Task 2: B
+5. SingleInstancePerTask
+   Only one instance of an activity with this launch mode can be running at a time, and the activity must be the only 
+   activity in its task. If the activity is already running, the system will bring it to the foreground. If the 
+   activity is not already running, the system will create a new instance of the activity in a new task. 
+   Other activities cannot be part of the same task as the singleInstancePerTask activity.\
+   Example 1:\
+   A -> B -> C -> D\
+   B with SingleInstancePerTask\
+   Task 1: A -> B \
+   Example 2:\
+   A -> C -> D \
+   B with SingleInstancePerTask \
+   Task 1: A -> C -> D \
+   Task 2: B
