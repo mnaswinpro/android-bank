@@ -1,5 +1,14 @@
 # Activity
 
+## What is an Activity?
+Activities are the presentation layer of an Android app.
+Each screen in an app is an Activity.
+They handle user interaction and display the UI.
+
+Purpose: The primary way users interact with your app. They represent a single screen with a user interface. Think of them as individual pages or windows within your app.
+Example: A login screen, a settings page, a screen for displaying a list of items.
+Lifecycle: Managed by the system. Activities transition through various states (created, started, resumed, paused, stopped, destroyed) based on user interaction and the overall state of the device.
+
 ## What are the lifecycles of an activity?
 
 1. onCreate()
@@ -158,7 +167,7 @@ Normally we would not want any back navigation in the new task, so usually activ
 ```
 
 ## Why do launcher activity have exported flag set as true by default? 
-Specifies whether an activity can be launched by other apps. By default true for launcher activity.
+Specifies whether an activity can be launched by other apps. By default, true for launcher activity.
 
 ## What are the different launch modes to launch an activity?
 

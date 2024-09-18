@@ -1,62 +1,10 @@
 # General
 
 ## What are the main components of Android?
-
-### Activity
-Activities are the presentation layer of an Android app. 
-Each screen in an app is an Activity. 
-They handle user interaction and display the UI.
-
-Purpose: The primary way users interact with your app. They represent a single screen with a user interface. Think of them as individual pages or windows within your app.
-Example: A login screen, a settings page, a screen for displaying a list of items.
-Lifecycle: Managed by the system. Activities transition through various states (created, started, resumed, paused, stopped, destroyed) based on user interaction and the overall state of the device.
-
-### Service
-Services handle long-running operations in the background, such as playing music or fetching data over the network. 
-They have no UI.
-
-Purpose: Perform long-running operations or background tasks without a user interface.
-Example: Playing music, downloading files, processing data in the background.
-Types:
-Foreground Services: Perform operations that are noticeable to the user (e.g., music playback) and require ongoing notification.
-Background Services: Perform operations that are not directly visible to the user. (Note: Restrictions on background execution have become stricter in recent Android versions.)
-
-### Broadcast Receivers
-Broadcast Receivers respond to system-wide broadcast announcements. 
-For example, an app can register a receiver to listen for incoming SMS messages.
-
-Purpose: Listen for and respond to system-wide broadcast announcements (events).
-Example: Receiving an incoming SMS message, a low battery alert, a change in network connectivity.
-Types:
-Static: Declared in your AndroidManifest.xml file, they can receive broadcasts even when your app isn't running.
-Dynamic: Registered programmatically within your app and are active only while your app is running.
-They provide flexibility in listening for specific broadcasts only when needed and unregistering them when they're no longer required
-```
-// 1. Create a BroadcastReceiver
-val myReceiver = object : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        // Handle the received broadcast
-        if (intent.action == Intent.ACTION_POWER_CONNECTED){
-            // Do something when the device is connected to power
-        }
-    }
-}
-
-// 2. Register the receiver
-val filter = IntentFilter(Intent.ACTION_POWER_CONNECTED)
-registerReceiver(myReceiver, filter)
-
-// 3. Unregister the receiver (e.g., in onStop() or onDestroy())
-unregisterReceiver(myReceiver)
-```
-
-### Content Providers
-Content Providers manage access to a structured set of data, such as contacts or media files. 
-They can be used to share data between apps.
-Purpose: Manage and share app data with other apps. They provide a structured mechanism for accessing and modifying data.
-Example: Accessing the device's contacts, calendar events, or media files.
-Data Access: Use a standardized interface (ContentResolver) to interact with content providers, allowing for data sharing between different apps in a secure and controlled manner.
-
+Activity
+Service
+Broadcast Receivers
+Content Providers
 
 ## Serialization vs Parcelable
 
@@ -70,4 +18,63 @@ Data Access: Use a standardized interface (ContentResolver) to interact with con
 
 
 ## what is reflection, marshalling and unmarshalling?
+Reflection is the ability of a program to inspect and manipulate its own structure and behavior at runtime.
+
+Dependency injection: Libraries like Hilt or Koin use reflection to instantiate and inject dependencies into classes.
+Serialization: Libraries like Gson or Moshi use reflection to convert objects to and from JSON or other formats.
+Event buses: Libraries like EventBus use reflection to find and invoke methods annotated with @Subscribe.
+Testing: Reflection can be used to access private members of classes for testing purposes.
+
+Marshalling and unmarshalling are processes used to convert data between different types, often for the 
+purpose of transmitting data across a network or storing it in a file.
+
+Consider an app that communicates with a server using JSON. When sending data to the server, the app needs to convert 
+its objects into JSON format (marshalling). When receiving data from the server, the app needs to convert the JSON 
+data back into objects (unmarshalling). Libraries like Gson or Moshi handle this marshalling and unmarshalling 
+process using reflection to inspect the objects and convert them to and from JSON.
+
+## What are Intents? What are the different types?
+Intents are powerful mechanisms for communication between different components of your app and even with components 
+of other apps.
+
+Explicit intents explicitly specify the component (Activity, Service, or Broadcast Receiver) that should receive the intent.
+```
+val intent = Intent(this, SecondActivity::class.java)
+startActivity(intent)
+```
+Implicit intents specify an action to be performed, and the Android system determines which component is best suited to handle that action.
+```
+val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com"))
+startActivity(intent)
+
+val intent = Intent(Intent.ACTION_SEND)
+intent.type = "message/rfc822"
+intent.putExtra(Intent.EXTRA_TEXT, message)
+startActivity(intent)
+```
+When using implicit intents, it's possible that no app on the device can handle the requested action. Always check if 
+there's an activity available to handle the intent before starting it.
+```
+if (intent.resolveActivity(packageManager) != null) {
+    startActivity(intent)
+} else {
+    // Handle the case where no activity can handle the intent
+}
+```
+
+## What are Intent filters? 
+Intent filters allow Android components to declare the kinds of intents they are capable of responding to.
+Declaring intent filters in the manifest makes them known to the Android system. This allows other apps and system 
+components to target your components with implicit intents, even if your app isn't currently running.
+```
+<activity android:name=".WebActivity">
+    <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="http" />
+        <data android:scheme="https" />
+    </intent-filter>
+</activity>
+```
 
