@@ -107,7 +107,7 @@ to the latest emitted value.
 | Value Holding       | Always holds the latest value (Cannot be null, we can use wrapper)   | Can hold nullable values                                                | 
 | Collection          | Collected using collect                                              | Observed using observe                                                  |
 | Emitting            | Emits values even when there are no active observers                 | Only emits updates to active observers in the STARTED or RESUMED state. |
-| Initial value       | Not required                                                         | required                                                                |
+| Initial value       | required                                                             | optional                                                                |
 
 ## What is back pressure handling?
 Backpressure handling involves mechanisms like buffering or dropping values to manage situations where the 

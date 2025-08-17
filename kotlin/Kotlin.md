@@ -190,7 +190,7 @@ Sealed classes are abstract and cannot be instantiated directly.
 ### Subclasses Can Be Anything
 Subclasses of a sealed class can be data classes, object classes, regular classes, or even sealed classes themselves.
 
-## What is a data class? Is it thread safe?
+## What is a data class?
 Data classes are designed to hold data. The compiler automatically generates several helpful methods like 
 equals(), hashCode(), toString(), and copy() for data classes.
 

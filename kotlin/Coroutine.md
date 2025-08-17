@@ -348,5 +348,9 @@ Thread confinement is a concurrency concept that operations on an object or a pi
 thread at a time. This helps prevent data races and other concurrency issues that can arise when multiple threads 
 try to modify shared data simultaneously.
 
+## How to identify which child job got exception when working with supervisor job?
+Passing coroutine Name
+Using custom exceptions
+
 
 

@@ -118,8 +118,7 @@ Activities, unlike regular classes, are not initialized using constructors becau
 ### System Control
 The Android system needs to control the lifecycle of activities. It handles the creation, destruction, and various state transitions (e.g., starting, stopping, resuming). Using constructors would take away this control from the system.
 
-###
-Complex Initialization
+### Complex Initialization
 Activities require more than just simple object creation. They need to be associated with a context, have their layout inflated, and be connected to the system's activity stack. Constructors are not designed for such complex initialization processes.
 
 ### Lifecycle Callbacks
